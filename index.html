@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mis Flyers · Patricia López</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: práctica y directa, una herramienta de bolsillo para una agente RE/MAX
+   IDEA: la vidriera de la oficina: cada propiedad es un cartel listo para mandar
+   PICTURE: la propiedad recién cargada a todo ancho, con su foto y precio
+   COLOUR and TYPE: azul RE/MAX dominante, navy de apoyo, rojo de acento; Montserrat
+   LAYOUT: cabecera navy con saludo y números, buscador, filtros, grilla de flyers */
+:root{color-scheme:light dark;--bg:light-dark(#F4F6FB,#070D22);--card:light-dark(#fff,#111A3A);--ink:light-dark(#000E35,#EEF1FA);--mute:light-dark(#4A5068,#A9B2CC);--line:light-dark(#DCE2EF,#243058);--blue:#0043FF;--red:#FF1200;--navy:#000E35}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Montserrat,system-ui,sans-serif;overflow-x:clip}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(4vw,16px)}
+header{background:var(--navy);color:#fff;padding:18px 0 22px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:10px;background:#fff;border-radius:8px;padding:8px 12px}
+.brand svg{height:24px;width:auto}.brand b{font-size:11px;letter-spacing:2px;color:var(--navy);border-left:1px solid #C9D3E8;padding-left:9px}
+.pill{border:1px solid rgba(255,255,255,.35);border-radius:99px;padding:6px 12px;font-size:11px;font-weight:700;letter-spacing:1px}
+.hi{display:flex;align-items:center;gap:14px;margin-top:22px}
+.av{width:58px;height:58px;border-radius:50%;background:var(--blue);display:grid;place-items:center;font-weight:800;font-size:20px;border:3px solid #fff;flex:none}
+.hi h1{margin:0;font-size:clamp(24px,4vw,32px);line-height:1.05;font-weight:800}
+.hi p{margin:4px 0 0;color:#C9D3E8;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:20px;border-top:1px solid rgba(255,255,255,.15);padding-top:14px;text-align:center}
+.stats div+div{border-left:1px solid rgba(255,255,255,.15)}
+.stats b{display:block;font-size:26px;font-weight:800}.stats span{font-size:11px;color:#C9D3E8;font-weight:600}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:14px 0 10px}
+.search{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 14px;height:48px}
+.search input{flex:1;border:0;background:none;outline:none;font-size:16px}
+.search:focus-within{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,67,255,.18)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 4px 14px;margin:0 -4px -8px;scrollbar-width:none}
+.chip{flex:none;height:38px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:600;cursor:pointer}
+.chip small{margin-left:6px;color:var(--mute);font-weight:700}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}.chip[aria-pressed=true] small{color:#DCE4FF}
+:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+h2{font-size:18px;margin:18px 0 10px;font-weight:800}
+.feat{position:relative;display:block;width:100%;border:0;padding:0;border-radius:16px;overflow:hidden;cursor:pointer;aspect-ratio:16/8;background:#C9D3E8;text-align:left}
+.feat img{width:100%;height:100%;object-fit:cover;display:block}
+.feat .tx{position:absolute;inset:auto 0 0 0;padding:18px;background:linear-gradient(transparent,rgba(0,14,53,.88));color:#fff}
+.rib{display:inline-block;background:var(--red);color:#fff;font-size:11px;font-weight:800;letter-spacing:1.5px;padding:5px 9px;border-radius:4px}
+.feat .t{font-size:clamp(20px,3vw,28px);font-weight:800;margin-top:8px;line-height:1.1}
+.feat .p{font-size:clamp(22px,3.4vw,32px);font-weight:900}
+.feat .l{font-size:13px;color:#DCE4FF}
+.head{display:flex;align-items:baseline;justify-content:space-between}.head span{color:var(--mute);font-size:13px;font-weight:600}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;padding-bottom:30px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.card .ph{position:relative;aspect-ratio:4/3;border:0;padding:0;cursor:pointer;background:#C9D3E8;display:block;width:100%}
+.card .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.op{position:absolute;top:10px;left:10px;background:var(--red);color:#fff;font-size:10px;font-weight:800;letter-spacing:1.5px;padding:4px 8px;border-radius:4px}
+.op.alq{background:var(--navy)}
+.pr{position:absolute;left:10px;bottom:10px;background:var(--blue);color:#fff;font-weight:800;font-size:16px;padding:6px 10px;border-radius:6px}
+.inf{padding:12px 14px 14px;display:flex;flex-direction:column;gap:3px;flex:1}
+.id{font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.5px}
+.tt{font-weight:800;font-size:16px;line-height:1.2}
+.lc{font-size:13px;color:var(--mute)}
+.ft{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px}.ft span{font-size:12px;font-weight:600;background:light-dark(#EEF2FF,#1A2550);color:var(--ink);padding:4px 8px;border-radius:6px}
+.wa{margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;height:44px;border-radius:10px;background:#25D366;color:#063;font-weight:800;text-decoration:none;font-size:14px}
+.wa svg{width:18px;height:18px;fill:currentColor}
+.empty{grid-column:1/-1;text-align:center;padding:40px 10px;color:var(--mute)}
+.fio{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:0 0 30px;text-decoration:none;color:var(--ink)}
+.fio i{width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-style:normal;font-weight:800;flex:none}
+.fio small{display:block;font-size:10px;letter-spacing:1.5px;color:var(--mute);font-weight:700}.fio b{font-size:15px}.fio span{display:block;font-size:13px;color:var(--mute)}
+.fio em{margin-left:auto;font-style:normal;font-weight:800;color:var(--blue);font-size:13px}
+dialog{border:0;padding:0;background:transparent;max-width:min(96vw,980px);width:100%;color:var(--ink)}
+dialog::backdrop{background:rgba(0,8,30,.78)}
+.sh{background:var(--card);border-radius:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);overflow:hidden;max-height:92vh}
+.sh .big{background:#000E35;display:flex;align-items:center;justify-content:center;padding:14px}
+.sh .big img{max-height:84vh;max-width:100%;border-radius:8px;display:block}
+.side{padding:22px;display:flex;flex-direction:column;gap:10px;overflow:auto}
+.side h3{margin:0;font-size:22px;line-height:1.1}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;height:48px;border-radius:10px;border:1px solid var(--line);background:var(--card);font-weight:800;cursor:pointer;text-decoration:none;color:var(--ink);font-size:14px}
+.btn.pri{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn.wa2{background:#25D366;border-color:#25D366;color:#063}
+.x{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;border:0;background:#fff;color:var(--navy);font-size:22px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.msg{font-size:13px;color:var(--mute);min-height:18px}
+.txt{font-size:13px;background:light-dark(#F4F6FB,#0B1430);border-radius:10px;padding:10px 12px;white-space:pre-line;color:var(--mute)}
+@media(max-width:700px){.sh{grid-template-columns:1fr;max-height:none}.sh .big img{max-height:62vh}dialog{max-height:96vh;overflow:auto}.feat{aspect-ratio:4/3}}
+@media(prefers-reduced-motion:no-preference){.card{transition:transform .15s}.card:hover{transform:translateY(-2px)}}
+/* ===== Secciones: tarjeta, calculadora, navegación ===== */
+body{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+.nav{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;display:flex;gap:4px;padding:6px;border-radius:99px;background:rgba(0,14,53,.82);backdrop-filter:blur(16px) saturate(1.6);-webkit-backdrop-filter:blur(16px) saturate(1.6);border:1px solid rgba(255,255,255,.14);box-shadow:0 14px 34px rgba(0,14,53,.35)}
+.nav a{display:flex;align-items:center;gap:7px;height:44px;padding:0 16px;border-radius:99px;color:#C9D3E8;text-decoration:none;font-weight:700;font-size:13px;white-space:nowrap}
+.nav a svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+.nav a[aria-current=page]{background:linear-gradient(135deg,#2B63FF,#0035CC);color:#fff;box-shadow:0 6px 16px rgba(0,67,255,.4)}
+.quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:16px}
+.qk{display:flex;align-items:center;gap:14px;padding:14px;border-radius:16px;background:var(--card);border:1px solid var(--line);text-decoration:none;color:var(--ink);box-shadow:0 8px 24px rgba(0,14,53,.07);transition:transform .2s,box-shadow .2s}
+.qk:hover{transform:translateY(-2px);box-shadow:0 14px 34px rgba(0,14,53,.12)}
+.qk .th{width:62px;height:62px;border-radius:14px;flex:none;display:grid;place-items:center;background:linear-gradient(135deg,#0043FF,#000E35);color:#fff;font-weight:900;font-size:22px;overflow:hidden}
+.qk .th img{width:100%;height:100%;object-fit:cover}
+.qk b{display:block;font-size:15px}.qk span{font-size:13px;color:var(--mute)}.qk em{margin-left:auto;font-style:normal;font-size:22px;color:var(--blue)}
+.view{padding-top:18px}.view[hidden]{display:none}
+.ch{font-size:clamp(24px,4vw,30px);margin:6px 0 4px;font-weight:800;line-height:1.1}.cs{margin:0 0 14px;color:var(--mute)}
+.ctabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-bottom:14px}
+.ctab{height:44px;border:0;border-radius:10px;background:none;font-weight:800;cursor:pointer}
+.ctab[aria-pressed=true]{background:linear-gradient(135deg,#2B63FF,#0035CC);color:#fff;box-shadow:0 6px 16px rgba(0,67,255,.35)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:14px;align-items:start}
+.cc,.res,.total2{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 8px 24px rgba(0,14,53,.06);margin-bottom:14px}
+.cc h3{display:flex;align-items:center;gap:10px;margin:0 0 6px;font-size:16px}
+.cc h3 i{width:28px;height:28px;border-radius:8px;display:grid;place-items:center;font-style:normal;font-size:13px;background:#EEF2FF;color:var(--blue);font-weight:900}
+.fl{display:block;font-size:13px;font-weight:700;color:var(--mute);margin:14px 0 6px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{flex:1 1 0;min-height:44px;padding:6px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-weight:800;cursor:pointer;font-size:14px;transition:background .2s,color .2s}
+.seg button small{display:block;font-size:11px;font-weight:600;color:var(--mute);margin-top:2px}
+.seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}.seg button[aria-pressed=true] small{color:#DCE4FF}
+#sAg button{min-height:58px}
+.money{display:flex;align-items:center;gap:8px;height:50px;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:var(--bg)}
+.money:focus-within,.txt:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(0,67,255,.15)}
+.money span{font-weight:800;color:var(--mute)}.money em{font-style:normal;color:var(--mute);font-size:13px}
+.money input{flex:1;border:0;background:none;outline:none;font-size:18px;font-weight:700;width:100%}
+.txt{width:100%;height:48px;border:1px solid var(--line);border-radius:12px;padding:0 14px;background:var(--bg);font-size:16px;outline:none}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px;align-items:end}
+.res{background:linear-gradient(180deg,var(--card),var(--card))}
+.rh{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:2px solid var(--blue);margin-bottom:6px}
+.rh span{font-size:11px;font-weight:800;letter-spacing:1.5px;color:var(--mute)}.rh b{font-size:clamp(22px,4vw,28px);font-weight:900;color:var(--blue);white-space:nowrap}
+.crow{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.crow small{display:block;color:var(--mute);font-size:12px}.crow b{white-space:nowrap}.crow.neg b{color:var(--red)}
+.cempty{color:var(--mute);font-size:13px;margin:10px 0}
+.rbar{display:flex;height:10px;border-radius:99px;overflow:hidden;margin:14px 0 8px;background:var(--line)}
+.rbar i:first-child{background:#000E35}.rbar i:last-child{background:linear-gradient(90deg,#2B63FF,#0043FF)}
+:root[data-theme=dark] .rbar i:first-child{background:#5A6690}
+.rl{display:flex;justify-content:space-between;font-size:12px;color:var(--mute);font-weight:700}.rl b{display:block;color:var(--ink);font-size:15px}.rl span:last-child{text-align:right}
+.nt{font-size:12px;color:var(--mute);margin:10px 0 0}
+.total2{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#000E35,#00187A);color:#fff;border:0}
+.total2 span{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#C9D3E8}.total2 b{font-size:26px;font-weight:900}
+details.cc summary{cursor:pointer;font-weight:800;min-height:24px}
+.sendg{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sendg .full{grid-column:1/-1}
+.btn svg{width:18px;height:18px;fill:currentColor}
+.btn.dark{background:linear-gradient(135deg,#000E35,#00187A);color:#fff;border:0}
+.cnote{font-size:12px;color:var(--mute);margin:12px 0 30px}
+.flash{animation:fl .5s}@keyframes fl{from{opacity:.35}to{opacity:1}}
+.kc{max-width:520px;margin:6px auto 30px;border-radius:24px;overflow:hidden;color:#fff;text-align:center;padding:34px 22px 24px;position:relative;background:radial-gradient(90% 60% at 90% 0%,rgba(0,67,255,.75),transparent 60%),radial-gradient(70% 50% at 0% 100%,rgba(255,18,0,.3),transparent 60%),linear-gradient(160deg,#000E35,#000A28);box-shadow:0 26px 60px rgba(0,14,53,.35)}
+.kav{width:150px;height:150px;margin:0 auto 16px;border-radius:50%;padding:4px;background:conic-gradient(#FF1200,#fff 25%,#0043FF 50%,#fff 75%,#FF1200);box-shadow:0 14px 34px rgba(0,0,0,.45)}
+.kav img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:4px solid #000E35;display:block}
+.kc h1{margin:0;font-size:32px;font-weight:900;line-height:1.1}.kt{margin-top:8px;font-size:12px;font-weight:700;letter-spacing:3px;color:#C9D3E8}
+.kq{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:22px 0}
+.kq a{display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff;text-decoration:none;font-size:12px;font-weight:700}
+.kq i{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px)}
+.kq svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:1.8}
+.kl{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;text-align:left;margin-bottom:16px}
+.kl div{display:flex;justify-content:space-between;gap:12px;padding:12px 14px}.kl div+div{border-top:1px solid rgba(255,255,255,.1)}
+.kl span{font-size:12px;color:#C9D3E8;font-weight:600}.kl b{font-size:13px;text-align:right;overflow-wrap:anywhere}
+.kb{display:grid;gap:10px}.kb.cli{grid-template-columns:1fr 1fr}
+body.client .kb.pat,body:not(.client) .kb.cli{display:none}
+body.client .nav,body.client .quick,body.client #fioLink{display:none}
+@media(max-width:420px){.nav a{padding:0 12px}.kq i{width:46px;height:46px}}
+/* ===== Premium ===== */
+header{position:relative;overflow:hidden;background:radial-gradient(120% 90% at 100% 0%,rgba(0,67,255,.55),transparent 55%),radial-gradient(80% 70% at 0% 100%,rgba(255,18,0,.22),transparent 60%),linear-gradient(160deg,#000E35 0%,#00113F 55%,#000A28 100%)}
+header::before{content:"";position:absolute;inset:-40%;background:conic-gradient(from 0deg at 50% 50%,transparent 0 70%,rgba(255,255,255,.06) 80%,transparent 90%);animation:spin 18s linear infinite;pointer-events:none}
+header .wrap{position:relative}
+.brand{box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.pill{background:rgba(255,255,255,.08);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.avw{position:relative;width:74px;height:74px;flex:none;border-radius:50%;padding:3px;background:conic-gradient(#FF1200,#fff 25%,#0043FF 50%,#fff 75%,#FF1200);animation:spin 6s linear infinite;box-shadow:0 0 0 6px rgba(0,67,255,.18),0 10px 30px rgba(0,0,0,.45)}
+.avw img{width:100%;height:100%;border-radius:50%;object-fit:cover;display:block;border:3px solid #000E35;animation:spin 6s linear infinite reverse}
+.avw::after{content:"";position:absolute;right:2px;bottom:4px;width:16px;height:16px;border-radius:50%;background:#25D366;border:3px solid #000E35}
+.hi small{display:inline-block;margin-top:6px;font-size:11px;font-weight:700;letter-spacing:1px;color:#fff;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);padding:3px 9px;border-radius:99px}
+.stats{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:14px 0;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);box-shadow:inset 0 1px 0 rgba(255,255,255,.12)}
+.stats b{background:linear-gradient(180deg,#fff,#C9D3E8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.bar{background:color-mix(in srgb,var(--bg) 78%,transparent);backdrop-filter:saturate(1.6) blur(14px);-webkit-backdrop-filter:saturate(1.6) blur(14px);border-bottom:1px solid transparent;transition:border-color .2s,box-shadow .2s}
+.bar.stuck{border-bottom-color:var(--line);box-shadow:0 8px 24px rgba(0,14,53,.08)}
+.search{box-shadow:0 4px 18px rgba(0,14,53,.06)}
+.chip{transition:background .2s,color .2s,transform .15s,box-shadow .2s}
+.chip[aria-pressed=true]{background:linear-gradient(135deg,#2B63FF,#0035CC);box-shadow:0 6px 16px rgba(0,67,255,.35)}
+.chip:active{transform:scale(.96)}
+.feat{box-shadow:0 18px 40px rgba(0,14,53,.22)}
+.feat img{transform-origin:60% 50%;position:absolute;inset:0}
+.feat .tx{z-index:1}
+.feat{max-height:440px}
+.rib{position:relative;overflow:hidden}
+.rib::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%);transform:translateX(-120%);animation:shine 3.2s ease-in-out infinite}
+.card{box-shadow:0 1px 2px rgba(0,14,53,.04),0 8px 24px rgba(0,14,53,.07);border-color:color-mix(in srgb,var(--line) 70%,transparent)}
+.card .ph{overflow:hidden}
+.card .ph img,.feat img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.card .ph::after{content:"";position:absolute;inset:auto 0 0 0;height:45%;background:linear-gradient(transparent,rgba(0,14,53,.55));pointer-events:none}
+.pr{z-index:1;background:rgba(0,67,255,.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.op{z-index:1;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.sk{background:linear-gradient(100deg,#DCE2EF 30%,#EEF2FA 50%,#DCE2EF 70%);background-size:200% 100%;animation:sk 1.3s linear infinite}
+.sk.ok{animation:none;background:#C9D3E8}
+.ph img,.feat img{opacity:0;transition:opacity .5s,transform .8s cubic-bezier(.2,.7,.2,1)}.ph img.ld,.feat img.ld{opacity:1}
+.wa{background:linear-gradient(135deg,#2BE071,#1EBE5A);color:#04391B;box-shadow:0 6px 16px rgba(37,211,102,.28);position:relative;overflow:hidden;transition:transform .15s,box-shadow .2s}
+.wa:active,.btn:active{transform:scale(.97)}
+.btn{transition:transform .15s,box-shadow .2s,background .2s}
+.btn.pri{background:linear-gradient(135deg,#2B63FF,#0035CC);box-shadow:0 8px 20px rgba(0,67,255,.32)}
+.btn.wa2{background:linear-gradient(135deg,#2BE071,#1EBE5A);box-shadow:0 8px 20px rgba(37,211,102,.28)}
+.fio[hidden]{display:none}.fio{box-shadow:0 8px 24px rgba(0,14,53,.07)}
+.fio i{background:linear-gradient(135deg,#2B63FF,#000E35)}
+dialog::backdrop{background:rgba(0,8,30,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sh{box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.sh .big{background:radial-gradient(90% 70% at 50% 0%,#0B2A8C,#000E35 70%)}
+.sh .big img{box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#000E35;color:#fff;padding:12px 18px;border-radius:12px;font-weight:700;font-size:14px;box-shadow:0 12px 30px rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:50;max-width:90vw;text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shine{0%,55%{transform:translateX(-120%)}100%{transform:translateX(120%)}}
+@keyframes sk{to{background-position:-200% 0}}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.08)}}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+@media(prefers-reduced-motion:no-preference){
+ .card{opacity:0}.card.in{animation:up .55s cubic-bezier(.2,.7,.2,1) both;animation-delay:var(--d,0ms)}
+ .card:hover{transform:translateY(-4px);box-shadow:0 2px 4px rgba(0,14,53,.05),0 18px 40px rgba(0,14,53,.16)}
+ .card:hover .ph img{transform:scale(1.06)}
+ .feat img.ld{animation:kb 14s ease-in-out infinite alternate}
+ .hi,.stats,.feat{animation:up .7s cubic-bezier(.2,.7,.2,1) both}.stats{animation-delay:.12s}.feat{animation-delay:.2s}
+ dialog[open] .sh{animation:pop .35s cubic-bezier(.2,.7,.2,1)}
+ .wa:hover,.btn.pri:hover,.btn.wa2:hover{transform:translateY(-1px)}
+}
+@media(prefers-reduced-motion:reduce){header::before,.avw,.avw img,.rib::after{animation:none}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap">
+  <div class="top">
+   <div class="brand" aria-label="RE/MAX Cuore">
+    <svg viewBox="0 0 101.6 27.9" aria-hidden="true"><g fill="#000E35"><path d="M94.8,17.5l6-9.8h-5.8l-3.4,6.2-3.4-6.2h-6l6,9.6-4.1,6.7-5.5-16.2h-6.5l-5.9,17.1V7.7h-6.2l-4.5,13.7-4.5-13.7h-2.2l-4.1,7.8v12.4h4.8v-11.9l3.9,11.9h3.9l3.9-12v12h9.3l1.2-3.9h7l1.2,3.9h7.5l3.9-7.1,4.2,7.1h6.1l-6.8-10.4h0ZM73,19.7l2.3-7.6,2.3,7.6h-4.6Z"/><path d="M44.8,11.9v-4.2h-13.9v20.2h7.5l2.2-4.2h-4.4v-3.9h6.4l2.2-4.3h-8.6v-3.6s8.6,0,8.6,0Z"/><path d="M23.9,16.2c-.5.4-1.3.7-2.4.7h-2.7v-5.1h2.7c1.2,0,2,.2,2.5.6.5.4.7,1,.7,1.9s-.2,1.5-.7,2h-.1ZM26.6,19.8c2.1-1.2,3.1-3.1,3.1-5.7s-.6-3.5-1.9-4.7c-1.3-1.1-3.3-1.7-6.1-1.7h-8.1v20.2h5.1v-7h3.1l3.4,7h5.6s-4.2-8.1-4.2-8.1Z"/></g><path fill="#fff" d="M6.4,14.5c-.2,0-.5-.1-.6-.3-1.1-1-3.1-2.7-3.9-3.7-.7-.8-1.3-1.6-1.6-2.6C.1,7.3,0,6.8,0,6.2s.1-1.5.4-2.2C1.4,1.6,3.7,0,6.4,0s5,1.5,5.9,3.9c.3.7.4,1.5.4,2.2s0,1.2-.3,1.7c-.3,1-.9,1.7-1.6,2.6-.8,1-2.8,2.7-3.9,3.7-.2.1-.4.3-.6.3h.1Z"/><path fill="#f7f5ee" d="M12,4.1H.7c-.3.7-.4,1.4-.4,2.1s0,1.1.2,1.6h11.6c.2-.5.2-1.1.2-1.6s-.1-1.5-.4-2.1h0Z"/><path fill="#660000" d="M6.3.4C3.8.4,1.6,1.9.7,4.1h11.3C11.1,1.9,8.9.4,6.3.4Z"/><path fill="#000e35" d="M.5,7.8c.3.9.9,1.7,1.5,2.5.8,1,3.1,3,3.9,3.7h0c0,0,.3.2.4.2s.2,0,.4-.2h0c.9-.8,3.1-2.7,3.9-3.7.6-.8,1.2-1.5,1.5-2.5H.5Z"/><path fill="#ff1200" d="M12,4.1h-5.6V1.4c0-.6.5-1,1.1-.9,2.1.4,3.8,1.7,4.5,3.6Z"/><path fill="#0043ff" d="M12.1,7.8c-.3.9-.9,1.7-1.5,2.5-.8,1-3.1,3-3.9,3.7h0c0,0-.3.2-.4.2v-5.4c0-.5.4-1,1-1,0,0,4.8,0,4.8,0Z"/></svg>
+    <b>CUORE</b>
+   </div>
+   <span class="pill">MIS FLYERS</span>
+  </div>
+  <div class="hi">
+   <div class="avw"><img src="patricia.jpg" alt="Patricia López"></div>
+   <div><h1 id="greet">Hola, Patricia</h1><p>Tus propiedades listas para compartir</p><small>Agente RE/MAX Cuore</small></div>
+  </div>
+  <div class="stats">
+   <div><b id="sT">9</b><span>PROPIEDADES</span></div>
+   <div><b id="sV">7</b><span>EN VENTA</span></div>
+   <div><b id="sA">2</b><span>EN ALQUILER</span></div>
+  </div>
+ </div>
+</header>
+
+<div class="bar"><div class="wrap">
+ <label class="search"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+  <span style="position:absolute;left:-9999px">Buscar</span>
+  <input id="q" type="search" placeholder="Buscar ID, calle o zona" autocomplete="off"></label>
+ <div class="chips" id="chips"></div>
+</div></div>
+
+<main class="wrap">
+<section id="flyers" class="view" style="padding-top:0">
+ <div class="quick">
+  <a class="qk" href="#tarjeta"><span class="th"><img src="patricia.jpg" alt=""></span><div><b>Mi tarjeta digital</b><span>Enviá tus datos a un cliente nuevo</span></div><em>›</em></a>
+  <a class="qk" href="#calculadora"><span class="th">%</span><div><b>Calculadora de honorarios</b><span>Alquiler y compra venta · Rapp, Alto y Puro</span></div><em>›</em></a>
+ </div>
+ <section id="fw"><h2>Recién cargada</h2><button class="feat" id="feat" type="button"></button></section>
+ <div class="head"><h2>Tus propiedades</h2><span id="count"></span></div>
+ <div class="grid" id="grid"></div>
+ </section>
+ <a class="fio" id="fioLink" href="https://wa.me/5491157938166?text=Hola%20Fiore%2C%20necesito%20ayuda%20con%20mis%20flyers"><i>F</i><div><small>TU ASISTENTE</small><b>Fiore</b><span>Pedime lo que necesites, yo me encargo.</span></div><em>Escribirle ›</em></a>
+
+<section id="card" class="view" hidden>
+ <div class="kc"><div class="kav"><img src="patricia.jpg" alt="Patricia López"></div>
+  <h1>Patricia López</h1><div class="kt">AGENTE INMOBILIARIA · RE/MAX CUORE</div>
+  <div class="kq">
+   <a id="kWa" target="_blank" rel="noopener" href="#"><i><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg></i>WhatsApp</a>
+   <a id="kTel" href="#"><i><svg viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></i>Llamar</a>
+   <a id="kWeb" target="_blank" rel="noopener" href="#"><i><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg></i>Propiedades</a>
+   <a id="kMail" href="#"><i><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></i>Email</a>
+  </div>
+  <div class="kl"><div><span>WhatsApp</span><b>11 6616-5131</b></div><div><span>Email</span><b>patricial@remax.com.ar</b></div><div><span>Oficina</span><b>RE/MAX Cuore · Rivadavia 430, Local 1</b></div></div>
+  <div class="kb pat"><button class="btn wa2" id="kSend" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>Enviar mi tarjeta digital</button></div>
+  <div class="kb cli"><button class="btn" id="kSave" type="button">Guardar en contactos</button><a class="btn pri" href="https://www.remax.com.ar/agent/patricia-lopez" target="_blank" rel="noopener">Ver mis propiedades</a></div>
+ </div>
+</section>
+
+<section id="calc" class="view" hidden>
+ <h2 class="ch">Calculadora de honorarios</h2><p class="cs">Calculá los gastos de cada parte y enviáselos por WhatsApp.</p>
+ <div class="ctabs"><button class="ctab" type="button" data-t="alq" aria-pressed="true">Alquiler</button><button class="ctab" type="button" data-t="ven" aria-pressed="false">Compra y venta</button></div>
+ <div class="cc"><h3><i>%</i>Tu reparto</h3><label class="fl">Plan del agente</label><div class="seg" id="sAg"></div></div>
+ <div id="cAlq"><div class="cgrid"><div>
+  <div class="cc"><h3><i>1</i>Contrato</h3>
+   <label class="fl">Moneda</label><div class="seg" id="sCur"></div>
+   <label class="fl" for="rent">Alquiler mensual (mes de ingreso)</label><div class="money"><span class="curs">$</span><input id="rent" data-m inputmode="decimal" placeholder="0"></div>
+   <label class="fl" for="months">Duración del contrato</label><div class="money"><input id="months" inputmode="numeric" value="36"><em>meses</em></div>
+   <label class="fl">Honorarios inmobiliarios</label><div class="seg" id="sP1"></div>
+   <label class="fl">IVA 21% sobre honorarios del inquilino</label><div class="seg" id="sIva1"></div>
+  </div>
+  <div class="cc"><h3><i>2</i>Otros conceptos</h3>
+   <div class="g2">
+    <div><label class="fl" for="dep">Depósito</label><div class="money"><span class="curs">$</span><input id="dep" data-m inputmode="decimal" placeholder="0"></div></div>
+    <div><label class="fl" for="res">Reserva (se resta)</label><div class="money"><span class="curs">$</span><input id="res" data-m inputmode="decimal" placeholder="0"></div></div>
+    <div><label class="fl" for="firm">Certificación de firmas</label><div class="money"><span class="curs">$</span><input id="firm" data-m inputmode="decimal" placeholder="0"></div></div>
+    <div><label class="fl" for="inf">Informes</label><div class="money"><span class="curs">$</span><input id="inf" data-m inputmode="decimal" placeholder="0"></div></div>
+   </div>
+   <label class="fl" for="own">Meses de alquiler a cargo del propietario</label><div class="money"><input id="own" inputmode="decimal" value="1"><em>meses</em></div>
+  </div></div><div>
+  <div class="res"><div class="rh"><span>INQUILINO PAGA</span><b id="t1">$ 0</b></div><div id="r1"></div><div id="rp1"></div><p class="nt">El reparto se calcula sobre los honorarios sin IVA.</p></div>
+  <div class="res"><div class="rh"><span>PROPIETARIO PAGA</span><b id="t1o">$ 0</b></div><div id="r1o"></div><div id="rp1o"></div></div>
+ </div></div></div>
+ <div id="cVen" hidden><div class="cgrid"><div>
+  <div class="cc"><h3><i>1</i>Operación</h3>
+   <label class="fl" for="price">Valor de la propiedad</label><div class="money"><span>US$</span><input id="price" data-m inputmode="decimal" placeholder="0"></div>
+   <label class="fl">Honorarios del vendedor</label><div class="seg" id="sPv"></div>
+   <label class="fl">Honorarios del comprador</label><div class="seg" id="sPc"></div>
+   <label class="fl">IVA 21% sobre honorarios a cargo de</label><div class="seg" id="sIva"></div>
+  </div></div><div>
+  <div class="res"><div class="rh"><span>COMPRADOR PAGA</span><b id="t2c">US$ 0</b></div><div id="r2c"></div></div>
+  <div class="res"><div class="rh"><span>VENDEDOR PAGA</span><b id="t2v">US$ 0</b></div><div id="r2v"></div></div>
+  <div class="total2"><span>TOTAL HONORARIOS</span><b id="t2">US$ 0</b></div>
+  <div class="res"><div id="rp2"></div><p class="nt">Reparto calculado sobre los honorarios sin IVA.</p></div>
+ </div></div></div>
+ <details class="cc"><summary>Datos para el comprobante</summary>
+  <label class="fl" for="cli">Nombre del cliente</label><input class="txt" id="cli" placeholder="Ej: Ana Pérez">
+  <label class="fl" for="cdir">Dirección de la propiedad</label><input class="txt" id="cdir" placeholder="Ej: Rivadavia 430, Quilmes">
+  <label class="fl" for="cag">Preparado por</label><input class="txt" id="cag" value="Patricia · RE/MAX Cuore">
+ </details>
+ <div class="sendg">
+  <button class="btn wa2" id="bt1" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg><span id="bt1l">Al inquilino</span></button>
+  <button class="btn wa2" id="bt2" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg><span id="bt2l">Al propietario</span></button>
+  <button class="btn dark full" id="btL" type="button">Liquidación completa · uso interno</button>
+ </div>
+ <p class="cnote">Los botones verdes envían por WhatsApp una imagen con lo que paga cada parte, sin el reparto. La liquidación completa incluye el reparto entre oficina y agente según tu plan (Rapp, Alto o Puro): es solo para vos.</p>
+</section>
+</main>
+
+<nav class="nav" aria-label="Secciones">
+ <a href="#" id="nF" aria-current="page"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>Flyers</a>
+ <a href="#tarjeta" id="nT"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6 16c.5-1.5 1.7-2 3-2s2.5.5 3 2M14 10h4M14 13h3"/></svg>Mi tarjeta</a>
+ <a href="#calculadora" id="nC"><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h2M12 11h2M8 15h2M12 15h2M16 11v4"/></svg>Honorarios</a>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<dialog id="dlg" aria-label="Flyer">
+ <div class="sh" style="position:relative">
+  <div class="big"><img id="big" alt=""></div>
+  <div class="side">
+   <span class="id" id="dId"></span>
+   <h3 id="dT"></h3>
+   <div class="lc" id="dL"></div>
+   <button class="btn pri" id="dl" type="button">Descargar flyer</button>
+   <a class="btn wa2" id="dWa" href="#">Enviar por WhatsApp</a>
+   <div class="msg" id="msg">Descargá el flyer y adjuntalo en el chat de WhatsApp.</div>
+   <div class="txt" id="dTxt"></div>
+   <button class="btn" id="cp" type="button">Copiar texto</button>
+   <a class="btn" id="ficha" href="#">Ver ficha en RE/MAX</a>
+  </div>
+  <button class="x" id="close" type="button" aria-label="Cerrar">×</button>
+ </div>
+</dialog>
+
+<script>
+{
+const D=[{"id":"420531106-41","slug":"venta-dpto-3-amb-con-cochera-balcon-apto-credito","titulo":"Departamento 3 ambientes","op":"Venta","tipo":"Departamento","precio":"USD 149.000","per":"","dir":"Av. Adolfo Alsina 100","zona":"Banfield · Lomas de Zamora","f":["2 dormitorios","1 baño + toilette","Cochera cubierta","62 m² · 9.º piso","Piscina y SUM","Apto crédito"],"n":41},{"id":"420531106-42","slug":"local-comercial-en-venta-centro-comercial-wilde","titulo":"Local comercial","op":"Venta","tipo":"Comercial","precio":"USD 40.000","per":"","dir":"Las Flores 1600","zona":"Wilde · Avellaneda","f":["10 m² cubiertos","Medidas 5 × 2 m","En centro comercial","Ideal emprendimiento"],"n":42},{"id":"420531106-40","slug":"venta-casa-7-amb-cochera-jardin-y-quincho","titulo":"Casa 7 ambientes","op":"Venta","tipo":"Casa","precio":"USD 270.000","per":"","dir":"José Evaristo Uriburu 4200","zona":"Ezpeleta Este · Quilmes","f":["6 dormitorios","4 baños + toilette","Cochera","281 m² cub. · 319 m² lote","Jardín y quincho","Ofrece financiación"],"n":40},{"id":"420531106-39","slug":"casa-4-amb-local-cochera-jardin-apto-credito","titulo":"Casa 4 ambientes + local","op":"Venta","tipo":"Casa","precio":"USD 58.000","per":"","dir":"José Matías Zapiola 100","zona":"Villa Vatteone · Florencio Varela","f":["3 dormitorios","1 baño","2 cocheras","Local de 41 m²","117 m² cub. · 225 m² lote","Apto crédito"],"n":39},{"id":"420531106-36","slug":"alquiler-casa-7-amb-cochera-jardin-y-quincho","titulo":"Casa 7 ambientes","op":"Alquiler","tipo":"Casa","precio":"$ 1.700.000","per":"/ mes","dir":"José Evaristo Uriburu 4200","zona":"Ezpeleta Este · Quilmes","f":["6 dormitorios","4 baños + toilette","Cochera","281 m² cubiertos","Jardín y quincho","Aire acondicionado"],"n":36},{"id":"420531106-34","slug":"alquiler-galpon-con-herramientas-incluidas-lanus","titulo":"Galpón / Taller con herramientas","op":"Alquiler","tipo":"Comercial","precio":"$ 2.500.000","per":"/ mes","dir":"Juncal 3700","zona":"Monte Chingolo · Lanús","f":["400 m² de terreno","Herramientas incluidas","Apto pintura automotriz","Acceso vehicular","1 baño","Muy buena iluminación"],"n":34},{"id":"420531106-27","slug":"venta-dpto-2-amb-en-wilde-apto-credito","titulo":"Departamento 2 ambientes","op":"Venta","tipo":"Departamento","precio":"USD 53.000","per":"","dir":"Emilio Zola 5800","zona":"Wilde · Avellaneda","f":["1 dormitorio","1 baño completo","40 m² cubiertos","1.º piso","Cocina separada","Apto crédito"],"n":27},{"id":"420531106-22","slug":"venta-casa-5-amb-con-piscina-nuevo-quilmes","titulo":"Casa 5 ambientes con piscina","op":"Venta","tipo":"Casa","precio":"USD 950.000","per":"","dir":"Av. Caseros 1700","zona":"Nuevo Quilmes · Quilmes","f":["4 dorm. (3 en suite)","5 baños","Piscina y parque","Quincho con parrilla","330 m² cub. · 665 m² lote","Seguridad"],"n":22},{"id":"420531106-2","slug":"casa-5-ambientes-con-cochera-en-sarandi","titulo":"Casa 5 ambientes","op":"Venta","tipo":"Casa","precio":"USD 75.000","per":"","dir":"General Arredondo 2900","zona":"Sarandí · Avellaneda","f":["4 dormitorios","3 baños","Cochera","221 m² totales","Jardín con parrilla","Terraza"],"n":2}];
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>s.normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const WA='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7a2.8 2.8 0 0 0 1.8-1.3 2.3 2.3 0 0 0 .2-1.3c-.1-.1-.3-.2-.5-.3z"/></svg>';
+const h=new Date().getHours();$('#greet').textContent=(h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+', Patricia';
+const cnt=(k,v)=>D.filter(x=>x[k]===v).length;
+$('#sT').textContent=D.length;$('#sV').textContent=cnt('op','Venta');$('#sA').textContent=cnt('op','Alquiler');
+const ficha=x=>'https://www.remax.com.ar/listings/'+x.slug;
+const precio=x=>x.precio+(x.per?' '+x.per:'');
+const texto=x=>x.titulo+' en '+x.op.toLowerCase()+' · '+precio(x)+'\n'+x.dir+' · '+x.zona+'\nID '+x.id+' · RE/MAX Cuore\n'+ficha(x);
+const waLink=x=>'https://wa.me/?text='+encodeURIComponent(texto(x));
+const st={op:'Todos',tipo:null,q:'',ord:'new'};
+const chips=$('#chips');
+const defs=[['op','Todos',D.length],['op','Venta',cnt('op','Venta')],['op','Alquiler',cnt('op','Alquiler')],['tipo','Casa',cnt('tipo','Casa')],['tipo','Departamento',cnt('tipo','Departamento')],['tipo','Comercial',cnt('tipo','Comercial')]];
+chips.innerHTML=defs.map(([k,v,n])=>`<button class="chip" type="button" data-k="${k}" data-v="${v}">${v}<small>${n}</small></button>`).join('')+'<select class="chip" id="ord" aria-label="Ordenar"><option value="new">Más nuevas</option><option value="lo">Menor precio</option><option value="hi">Mayor precio</option></select>';
+chips.querySelectorAll('button').forEach(b=>b.onclick=()=>{const k=b.dataset.k,v=b.dataset.v;if(k==='op')st.op=v;else st.tipo=st.tipo===v?null:v;render()});
+$('#ord').onchange=e=>{st.ord=e.target.value;render()};
+// precio comparable: alquileres en ARS se ordenan aparte de USD
+const num=x=>+x.precio.replace(/\D/g,'')*(x.precio.startsWith('USD')?1000:1);
+const newest=[...D].sort((a,b)=>b.n-a.n)[0];
+const tag=x=>`<span class="op ${x.op==='Alquiler'?'alq':''}">${x.op==='Venta'?'VENTA':'ALQUILER'}</span>`;
+$('#feat').innerHTML=`<img src="${esc(newest.id)}_foto.jpg" alt=""><div class="tx"><span class="rib">NUEVA · ID ${esc(newest.id)}</span><div class="t">${esc(newest.titulo)}</div><div class="p">${esc(precio(newest))}</div><div class="l">${esc(newest.dir)} · ${esc(newest.zona)}</div></div>`;
+$('#feat').setAttribute('aria-label','Ver flyer '+newest.id);
+$('#feat').onclick=()=>open(newest);
+function render(){
+ chips.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',(b.dataset.k==='op'?st.op===b.dataset.v:st.tipo===b.dataset.v)?'true':'false'));
+ const q=norm(st.q.trim());
+ let L=D.filter(x=>(st.op==='Todos'||x.op===st.op)&&(!st.tipo||x.tipo===st.tipo)&&(!q||norm([x.id,x.titulo,x.dir,x.zona,x.precio,x.tipo,x.f.join(' ')].join(' ')).includes(q)));
+ L.sort(st.ord==='new'?(a,b)=>b.n-a.n:st.ord==='lo'?(a,b)=>num(a)-num(b):(a,b)=>num(b)-num(a));
+ $('#fw').hidden=!!(q||st.tipo||st.op!=='Todos');
+ $('#count').textContent=L.length===1?'1 flyer':L.length+' flyers';
+ $('#grid').innerHTML=L.length?L.map(x=>`<article class="card"><button class="ph" type="button" data-id="${esc(x.id)}" aria-label="Ver flyer ${esc(x.id)}"><img loading="lazy" src="${esc(x.id)}_foto.jpg" alt="">${tag(x)}<span class="pr">${esc(precio(x))}</span></button>
+  <div class="inf"><span class="id">ID ${esc(x.id)}</span><div class="tt">${esc(x.titulo)}</div><div class="lc">${esc(x.dir)} · ${esc(x.zona)}</div><div class="ft">${x.f.slice(0,3).map(f=>`<span>${esc(f)}</span>`).join('')}</div>
+  <a class="wa" data-id="${esc(x.id)}" href="${esc(waLink(x))}" target="_blank" rel="noopener">${WA}Compartir</a></div></article>`).join('')
+  :'<div class="empty"><b style="color:var(--ink);font-size:17px">Sin resultados</b><br>Probá con otro ID, calle o zona.</div>';
+ $('#grid').querySelectorAll('.ph').forEach(b=>b.onclick=()=>open(D.find(x=>x.id===b.dataset.id)));
+}
+$('#q').oninput=e=>{st.q=e.target.value;render()};
+const dlg=$('#dlg');let cur=null,downloads=null;
+function open(x){cur=x;$('#big').src=x.id+'.jpg';$('#big').alt='Flyer '+x.titulo+' · ID '+x.id;$('#dId').textContent='ID '+x.id;$('#dT').textContent=x.titulo+' · '+precio(x);$('#dL').textContent=x.dir+' · '+x.zona;$('#dWa').href=waLink(x);$('#ficha').href=ficha(x);$('#dTxt').textContent=texto(x);$('#msg').textContent='Descargá el flyer y adjuntalo en el chat de WhatsApp.';try{dlg.showModal()}catch(e){dlg.setAttribute('open','')}}
+$('#close').onclick=()=>dlg.close();
+dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+$('#dWa').target='_blank';$('#ficha').target='_blank';
+$('#cp').onclick=async()=>{try{await navigator.clipboard.writeText(texto(cur));$('#msg').textContent='Texto copiado.';toast('Texto copiado ✓')}catch(e){$('#msg').textContent='No se pudo copiar: mantené apretado el texto para copiarlo.'}};
+$('#dl').onclick=async()=>{if(!cur)return;const m=$('#msg');
+ if(!downloads){m.textContent='Mantené apretada la imagen del flyer para guardarla.';return}
+ try{const b=await fetch(cur.id+'.jpg').then(r=>r.blob());await downloads.save({filename:'Flyer_'+cur.id+'.jpg',data:b});m.textContent='Listo, flyer descargado.';toast('Flyer descargado ✓')}
+ catch(e){m.textContent=e&&e.code==='declined'?'Descarga cancelada.':'No se pudo descargar: mantené apretada la imagen para guardarla.'}};
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)};
+const io=('IntersectionObserver' in window)?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -6% 0px'}):null;
+function polish(){document.querySelectorAll('.ph,.feat').forEach(p=>{const i=p.querySelector('img');if(!i||i.dataset.w)return;i.dataset.w=1;p.classList.add('sk');const ok=()=>{i.classList.add('ld');p.classList.add('ok')};if(i.complete&&i.naturalWidth)ok();else i.addEventListener('load',ok,{once:true})});
+ document.querySelectorAll('#grid .card').forEach((c,k)=>{c.style.setProperty('--d',(k%8)*60+'ms');if(io)io.observe(c);else c.classList.add('in')})}
+window.toast=toast;
+let LOGO=null;window.__logoImg=()=>LOGO||(LOGO=new Promise(r=>{const sv=document.querySelector('.brand svg').cloneNode(true);sv.setAttribute('xmlns','http://www.w3.org/2000/svg');const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sv.outerHTML)}));
+const aDl=f=>{const u=URL.createObjectURL(f);const a=document.createElement('a');a.href=u;a.download=f.name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000)};
+window.saveFile=async(f,okMsg)=>{if(downloads){try{await downloads.save({filename:f.name,data:f});toast(okMsg||'Archivo descargado ✓')}catch(e){toast(e&&e.code==='declined'?'Descarga cancelada.':e&&e.code==='rejected_extension'?'Este archivo se puede guardar desde la app publicada en tu web.':'No se pudo descargar.')}return}
+ try{aDl(f);toast(okMsg||'Archivo descargado ✓')}catch(e){toast('No se pudo descargar.')}};
+window.shareFile=async(f,text,wa,waText)=>{try{if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],text:waText||undefined,title:typeof text==='string'?text:undefined});return}}catch(e){if(e&&e.name==='AbortError')return}
+ await window.saveFile(f,wa?'Imagen descargada. Adjuntala en el chat de WhatsApp.':'Imagen descargada ✓');
+ if(wa&&!downloads){try{window.open('https://wa.me/'+(waText?'?text='+encodeURIComponent(waText):''),'_blank')}catch(e){}}};
+// compartir flyer con imagen cuando el teléfono lo permite
+const canFiles=(()=>{try{return !!(navigator.canShare&&navigator.canShare({files:[new File(['x'],'a.jpg',{type:'image/jpeg'})]}))}catch(e){return false}})();
+const blobs={};const getB=x=>blobs[x.id]??=fetch(x.id+'.jpg').then(r=>r.blob());
+document.addEventListener('click',async e=>{const a=e.target.closest('.wa,#dWa');if(!a||!canFiles)return;const id=a.dataset.id||(cur&&cur.id);const x=D.find(p=>p.id===id);if(!x)return;
+ e.preventDefault();try{const b=await getB(x);await navigator.share({files:[new File([b],'Flyer_'+x.id+'.jpg',{type:'image/jpeg'})],text:texto(x)})}catch(err){if(!err||err.name!=='AbortError')location.href=waLink(x)}},true);
+function route(){const h=location.hash;const cli=h==='#contacto';document.body.classList.toggle('client',cli);
+ const v=h==='#calculadora'?'calc':(h==='#tarjeta'||cli)?'card':'flyers';
+ $('#calc').hidden=v!=='calc';$('#card').hidden=v!=='card';$('#flyers').hidden=v!=='flyers';$('.bar').hidden=v!=='flyers';$('.stats').hidden=v!=='flyers';$('#fioLink').hidden=v!=='flyers';
+ $('#nF').setAttribute('aria-current',v==='flyers'?'page':'false');$('#nT').setAttribute('aria-current',v==='card'?'page':'false');$('#nC').setAttribute('aria-current',v==='calc'?'page':'false');
+ if(document.readyState!=='loading')scrollTo(0,0)}
+addEventListener('hashchange',route);route();
+const _render=render;render=function(){_render();polish()};
+const count=(el,to)=>{if(matchMedia('(prefers-reduced-motion: reduce)').matches){el.textContent=to;return}let t0=null;const f=t=>{t0??=t;const p=Math.min(1,(t-t0)/1100);el.textContent=Math.round(to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(f)};el.textContent=0;requestAnimationFrame(f)};
+setTimeout(()=>{count($('#sT'),D.length);count($('#sV'),cnt('op','Venta'));count($('#sA'),cnt('op','Alquiler'))},300);
+const bar=$('.bar');addEventListener('scroll',()=>bar.classList.toggle('stuck',bar.getBoundingClientRect().top<=0&&scrollY>200),{passive:true});
+render();
+if(window.claude&&claude.use)claude.use('downloads').then(d=>{downloads=d}).catch(()=>{});
+}
+</script>
+<script src="calc.js"></script>
+<script src="card.js"></script>
+</body>
+</html>
